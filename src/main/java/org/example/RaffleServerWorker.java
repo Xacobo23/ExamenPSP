@@ -24,6 +24,7 @@ public class RaffleServerWorker implements Runnable{
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
+                out.println(inputLine);
                 if (".".equals(inputLine)) {
                     out.println("bye");
                     break;

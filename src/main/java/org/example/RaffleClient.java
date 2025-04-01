@@ -14,7 +14,7 @@ public class RaffleClient {
     private BufferedReader in;
 
     public static void main(String[] args) throws IOException {
-        RaffleClient raffleClient =new RaffleClient();
+        RaffleClient raffleClient = new RaffleClient();
         raffleClient.startConnection(InetAddress.getLocalHost().toString(),55555);
         raffleClient.communicate();
         raffleClient.stopConnection();
