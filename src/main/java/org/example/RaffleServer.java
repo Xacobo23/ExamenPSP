@@ -5,13 +5,13 @@ import java.net.ServerSocket;
 import java.util.*;
 
 public class RaffleServer {
-    private static final int MAX_OF_TICKETS = 10;
-    private static final int NUM_CHARS = 6;
+    public static final int MAX_OF_TICKETS = 10;
+    public static final int NUM_CHARS = 6;
     private static final int PORT = 55555;
 
     private Ticket winner;
 
-    private List<Ticket> tickets = new ArrayList<>();
+    private static final List<Ticket> tickets = Collections.synchronizedList(new ArrayList<>());
 
     private ServerSocket serverSocket;
 
@@ -37,6 +37,17 @@ public class RaffleServer {
             serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void add(Ticket ticket){
+        synchronized (tickets){
+            if(tickets.size() < MAX_OF_TICKETS) tickets.add(ticket);
+        }
+    }
+    public static List<Ticket> getList(){
+        synchronized (tickets){
+            return tickets;
         }
     }
 }

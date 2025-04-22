@@ -13,7 +13,9 @@ public class RaffleClient {
     private PrintWriter out;
     private BufferedReader in;
 
-    private static final String QUIT_MESSAGE = "I1F-A£3?&Et4F~*8HAzcAsl3C8P£2`*";
+//    private static final String QUIT_MESSAGE = "I1F-A£3?&Et4F~*8HAzcAsl3C8P£2`*";
+    private static final String QUIT_MESSAGE = "Bye.";
+
 
     public static void main(String[] args) throws IOException {
         RaffleClient raffleClient = new RaffleClient();
@@ -27,7 +29,8 @@ public class RaffleClient {
         String inputLine;
         String cap;
 
-        System.out.println(this.sendMessage(""));
+        String startMessage = this.getMessage();
+        if (startMessage != null) System.out.println(startMessage);
 
         while (scanner.hasNextLine()) {
             inputLine = scanner.nextLine();
@@ -35,10 +38,11 @@ public class RaffleClient {
             cap = this.sendMessage(inputLine);
             if (cap == null) {
                 System.out.println("Received null response from server.");
-            } else if (QUIT_MESSAGE.equals(cap)) {
-                break;
             } else {
                 System.out.println(cap);
+                if (QUIT_MESSAGE.equals(cap.substring(cap.length()-4))) {
+                    break;
+                }
             }
         }
     }
@@ -59,6 +63,14 @@ public class RaffleClient {
             return in.readLine();
         } catch (Exception e) {
             System.err.println("Error when sending message: " + e.getMessage());
+            return null;
+        }
+    }
+    public String getMessage() {
+        try {
+            return in.readLine();
+        } catch (Exception e) {
+            System.err.println("Error with start message: " + e.getMessage());
             return null;
         }
     }

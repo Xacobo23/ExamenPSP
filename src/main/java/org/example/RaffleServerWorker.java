@@ -12,6 +12,8 @@
         private PrintWriter out;
         private BufferedReader in;
 
+        private String name = null;
+
 
         public RaffleServerWorker(Socket socket) {
             this.clientSocket = socket;
@@ -21,35 +23,47 @@
         public void run() {
             try {
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
+                out.println("Welcome to ClemenRaffle service.");
                 in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 String inputLine;
-                out.println("Welcome to ClemenRaffle service.");
                 while ((inputLine = in.readLine()) != null) {
 
         /*
         CASE de CLIENT
          */
                     if (inputLine.split(" ").length==2 && inputLine.split(" ")[0].equalsIgnoreCase("CLIENT")){
-                        out.println(inputLine.split(" ")[1]);
-                    }
-                    switch (inputLine.toUpperCase()){
-                        case "CLIENT" -> {
-                            out.println("falta o nombre");
+                        if (name != null) out.println("<"+name+">- Client name is not modifiable.");
+                        else {
+                            name = inputLine.split(" ")[1];
+                            out.println("Hello <"+name+">.");
                         }
+                    }
+
+                    else switch (inputLine.toUpperCase()){
                         case "BUY" -> {
-                            out.println("dixeches buy");
+                            if (name==null) out.println("Client name required.");
+                            else {
+
+                                if (RaffleServer.getList().size() < RaffleServer.MAX_OF_TICKETS) {
+                                    Ticket ticket = new Ticket(name, RaffleServer.NUM_CHARS);
+                                    RaffleServer.add(ticket);
+                                    out.println("<"+name+">- <"+name+"> has got the raffle "+ticket.ticketValue);
+                                }
+                                else out.println("<"+name+">- List has reached the maximum");
+                            }
                         }
                         case "CALC" -> {
-                            out.println("calculo");
+                            if (name==null) out.println("Client name required.");
+                            if (RaffleServer.getList().size()==RaffleServer.MAX_OF_TICKETS) out.println("<"+name+">- The raffle has ended.");
+                            else out.println("<"+name+">- The odds are 1/"+RaffleServer.getList().size()+".");
                         }
                         case "QUIT" -> {
-                            out.println("I1F-A£3?&Et4F~*8HAzcAsl3C8P£2`*");
+                            out.println("<"+name+">- Bye.");
                             in.close();
                             out.close();
                             clientSocket.close();
                         }
-                        default -> out.println("Error");
-
+                        default -> out.println("<"+name+">- Unknown command.");
                     }
                 }
 
